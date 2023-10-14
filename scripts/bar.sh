@@ -20,7 +20,9 @@ pkg_updates() {
   updates=$({ timeout 20 checkupdates 2>/dev/null || true; } | wc -l) # arch
   # updates=$({ timeout 20 aptitude search '~U' 2>/dev/null || true; } | wc -l)  # apt (ubuntu, debian etc)
 
-  if [ -z "$updates" ]; then
+  if [ -z "$updates" ] ; then
+    printf "  ^c$green^    Fully Updated"
+  elif [ "$updates" -eq 0 ]; then
     printf "  ^c$green^    Fully Updated"
   else
     printf "  ^c$green^    $updates"" updates"
@@ -28,7 +30,7 @@ pkg_updates() {
 }
 
 battery() {
-  get_capacity="$(cat /sys/class/power_supply/BAT1/capacity)"
+  get_capacity="$(cat /sys/class/power_supply/BAT0/capacity)"
   printf "^c$blue^   $get_capacity"
 }
 
@@ -54,10 +56,14 @@ clock() {
 	printf "^c$black^^b$blue^ $(date '+%H:%M')  "
 }
 
+vol() {
+	printf "^c$grey^ $(amixer get Master | awk '$0~/%/{print $5}' | tr -d '[%]' | head -n 1)%%"
+}
+
 while true; do
 
   [ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates)
   interval=$((interval + 1))
 
-  sleep 1 && xsetroot -name "$updates $(battery) $(brightness) $(cpu) $(mem) $(wlan) $(clock)"
+  sleep 1 && xsetroot -name "$updates $(battery) $(brightness) $(cpu) $(mem) $(wlan) $(clock) $(vol)"
 done
