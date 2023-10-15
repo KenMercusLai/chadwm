@@ -8,4 +8,6 @@ picom &
 
 ~/.config/chadwm/scripts/bar.sh &
 # eww open eww &
+obsidian &
+dropbox &
 while type chadwm >/dev/null; do chadwm && continue || break; done
