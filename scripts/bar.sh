@@ -46,24 +46,27 @@ mem() {
 
 wlan() {
 	case "$(cat /sys/class/net/wl*/operstate 2>/dev/null)" in
-	up) printf "^c$black^ ^b$blue^ 󰤨 ^d^%s" " ^c$blue^Connected" ;;
-	down) printf "^c$black^ ^b$blue^ 󰤭 ^d^%s" " ^c$blue^Disconnected" ;;
+	# up) printf "^c$black^ ^b$blue^ 󰤨 ^d^%s" " ^c$blue^Connected" ;;
+	up) printf "^c$black^ ^b$blue^ 󰤨 ^d^%s" ;;
+	# down) printf "^c$black^ ^b$blue^ 󰤭 ^d^%s" " ^c$blue^Disconnected" ;;
+	down) printf "^c$black^ ^b$blue^ 󰤭 ^d^%s" ;;
 	esac
 }
 
 clock() {
-	printf "^c$black^ ^b$darkblue^ 󱑆 "
-	printf "^c$black^^b$blue^ $(date '+%H:%M')  "
+	# printf "^c$black^ ^b$darkblue^ 󱑆 "
+	printf "^c$black^^b$blue^ $(date '+%Y-%m-%d %a %H:%M') ";;
 }
 
 vol() {
-	printf "^c$grey^ $(amixer get Master | awk '$0~/%/{print $5}' | tr -d '[%]' | head -n 1)%%"
+	printf "^c$grey^%.0f%%\n" $(amixer get Master | awk '$0~/%/{print $5}' | tr -d '[%]' | head -n 1)
 }
 
 while true; do
 
-  [ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates)
+  # [ $interval = 0 ] || [ $(($interval % 3600)) = 0 ] && updates=$(pkg_updates)
   interval=$((interval + 1))
 
-  sleep 1 && xsetroot -name "$updates $(battery) $(brightness) $(cpu) $(mem) $(wlan) $(clock) $(vol)"
+  # sleep 1 && xsetroot -name "$updates $(battery) $(brightness) $(cpu) $(mem) $(wlan) $(clock) $(vol)"
+  sleep 1 && xsetroot -name "$(battery) $(brightness) $(cpu) $(mem) $(wlan) $(clock) $(vol)"
 done
